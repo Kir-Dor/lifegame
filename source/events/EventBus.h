@@ -55,8 +55,9 @@ void EventBus::unsubscribe(std::function<void(const T&)>&& action) {
   };
   auto [begin, end] = action_map.equal_range(T::name());
   for (auto it = begin; it != end; ++it) {
-    if (it->second == wrapper) {
-      action_map.erase();
+    if (typeid(it->second) == typeid(wrapper)) {
+      action_map.erase(it);
+      global::Logger::get_instance().log_debug(R"(Action with type id "{}" unsubscribed from event "{}")", typeid(action).name(), T::name());
       break;
     }
   }

@@ -16,6 +16,8 @@ struct InfoWindowCreateInfo : public IComponentCreateInfo {
 class InfoWindow final : public IComponent {
  public:
   InfoWindow(InfoWindowCreateInfo& create_info);
+  ~InfoWindow();
+
   void draw() override;
   void on_sfml_event() override;
 

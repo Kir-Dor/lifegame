@@ -4,9 +4,11 @@
 #include <mutex>
 #include <vector>
 
+#include "Console.h"
 #include "events/EventBus.h"
 #include "events/model/FieldChanged.h"
 #include "misc/Config.h"
+#include "misc/LambdaCreator.h"
 
 namespace view::component {
 
@@ -26,9 +28,17 @@ GameField::GameField(GameFieldCreateInfo& create_info)
     }
   }
 
-  auto on_field_change_handler = [this](const event::model::FieldChanged& event) { on_field_changed(event); };
-  global::EventBus::get_instance().subscribe<event::model::FieldChanged>(
-      on_field_change_handler);
+  auto& event_bus = global::EventBus::get_instance();
+
+  event_bus.subscribe<event::model::FieldChanged>(
+      ::misc::LambdaCreator::create<&GameField::on_field_changed>(*this));
+}
+
+GameField::~GameField() {
+  auto& event_bus = global::EventBus::get_instance();
+
+  event_bus.unsubscribe<event::model::FieldChanged>(
+      ::misc::LambdaCreator::create<&GameField::on_field_changed>(*this));
 }
 
 void GameField::draw() {

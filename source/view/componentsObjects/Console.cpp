@@ -1,9 +1,10 @@
 #include "Console.h"
 
+#include "misc/LambdaCreator.h"
+#include "misc/Config.h"
 #include "events/EventBus.h"
 #include "events/other/Error.h"
 #include "events/view/Resume.h"
-#include "misc/Config.h"
 #include "view/misc/CommandParser.h"
 
 namespace view::component {
@@ -20,20 +21,26 @@ Console::Console(ConsoleCreateInfo& create_info)
   fps_text_.setCharacterSize(25);
   fps_text_.setFillColor(sf::Color::White);
 
-  auto on_error_handler = [this](const event::Error& error) {
-    on_error(error);
-  };
-  global::EventBus::get_instance().subscribe<event::Error>(
-      std::move(on_error_handler));
+  auto& event_bus = global::EventBus::get_instance();
 
-  auto on_resume_handler = [this](const event::view::Resume& resume) {
-    on_resume(resume);
-  };
-  global::EventBus::get_instance().subscribe<event::view::Resume>(
-      std::move(on_resume_handler));
+  event_bus.subscribe<event::Error>(
+      ::misc::LambdaCreator::create<&Console::on_error>(*this));
+
+  event_bus.subscribe<event::view::Resume>(
+      ::misc::LambdaCreator::create<&Console::on_resume>(*this));
 
   global::Logger::get_instance().log_debug(
       R"(View component "Console" initialized!)");
+}
+
+Console::~Console() {
+  auto& event_bus = global::EventBus::get_instance();
+
+  event_bus.unsubscribe<event::Error>(
+      ::misc::LambdaCreator::create<&Console::on_error>(*this));
+
+  event_bus.unsubscribe<event::view::Resume>(
+      ::misc::LambdaCreator::create<&Console::on_resume>(*this));
 }
 
 void Console::draw() {

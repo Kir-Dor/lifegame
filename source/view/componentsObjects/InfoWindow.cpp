@@ -1,8 +1,9 @@
 #include "InfoWindow.h"
 
-#include "events/view/Resume.h"
 #include "events/EventBus.h"
 #include "events/other/Error.h"
+#include "events/view/Resume.h"
+#include "misc/LambdaCreator.h"
 
 namespace view::component {
 InfoWindow::InfoWindow(
@@ -18,8 +19,16 @@ InfoWindow::InfoWindow(
   text_.setPosition({component_bounds_.getPosition().x + 5, component_bounds_.getPosition().y + 2});
   text_.setFillColor(sf::Color::White);
 
-  auto on_error_handler = [this](const event::Error& error) {this->on_error(error);};
-  global::EventBus::get_instance().subscribe<event::Error>(on_error_handler);
+  auto& event_bus = global::EventBus::get_instance();
+
+  event_bus.subscribe<event::Error>(
+      ::misc::LambdaCreator::create<&InfoWindow::on_error>(*this));
+}
+InfoWindow::~InfoWindow() {
+  auto& event_bus = global::EventBus::get_instance();
+
+  event_bus.unsubscribe<event::Error>(
+      ::misc::LambdaCreator::create<&InfoWindow::on_error>(*this));
 }
 
 void InfoWindow::draw() {

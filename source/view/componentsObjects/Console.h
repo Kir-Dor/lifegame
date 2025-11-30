@@ -22,6 +22,8 @@ struct ConsoleCreateInfo : public IComponentCreateInfo {
 class Console final : public IComponent {
 public:
   Console(ConsoleCreateInfo& create_info);
+  ~Console();
+
   void draw() override;
   void on_sfml_event() override;
 private:

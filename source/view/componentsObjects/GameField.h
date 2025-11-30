@@ -14,6 +14,8 @@ struct GameFieldCreateInfo : public IComponentCreateInfo {};
 class GameField final : public IComponent {
  public:
   GameField(GameFieldCreateInfo& create_info);
+  ~GameField();
+
   void draw() override;
   void on_sfml_event() override {}
  private:

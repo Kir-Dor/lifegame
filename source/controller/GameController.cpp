@@ -52,22 +52,22 @@ GameController::~GameController() {
   event_bus.unsubscribe<event::user::LoadFile>(
       misc::LambdaCreator::create<&GameController::on_load>(*this));
 
-  event_bus.subscribe<event::user::SaveFile>(
+  event_bus.unsubscribe<event::user::SaveFile>(
       misc::LambdaCreator::create<&GameController::on_save>(*this));
 
-  event_bus.subscribe<event::user::Tick>(
+  event_bus.unsubscribe<event::user::Tick>(
       misc::LambdaCreator::create<&GameController::on_tick>(*this));
 
-  event_bus.subscribe<event::user::Start>(
+  event_bus.unsubscribe<event::user::Start>(
       misc::LambdaCreator::create<&GameController::on_start>(*this));
 
-  event_bus.subscribe<event::user::Stop>(
+  event_bus.unsubscribe<event::user::Stop>(
       misc::LambdaCreator::create<&GameController::on_stop>(*this));
 
-  event_bus.subscribe<event::user::Pause>(
+  event_bus.unsubscribe<event::user::Pause>(
       misc::LambdaCreator::create<&GameController::on_pause>(*this));
 
-  event_bus.subscribe<event::user::Exit>(
+  event_bus.unsubscribe<event::user::Exit>(
       misc::LambdaCreator::create<&GameController::on_exit>(*this));
 }
 
