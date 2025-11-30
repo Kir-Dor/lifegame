@@ -1,0 +1,34 @@
+#pragma once
+#include <bitset>
+#include <cstdint>
+#include <mutex>
+#include <string>
+#include <vector>
+
+namespace model {
+
+class GameModel {
+ public:
+  GameModel();
+  void load(const std::string& filepath);
+  void save(std::string filename);
+
+  void next_generation();
+
+  [[nodiscard]] std::vector<bool> get_data() const;
+
+ private:
+  std::mutex mutex_;
+
+  std::vector<bool> field_;
+  std::vector<bool> temp_data_;
+
+  std::bitset<9> rules_for_born_;
+  std::bitset<9> rules_for_survive_;
+
+  std::string universe_name_;
+  
+  uint8_t get_lives_around(int x, int y);
+};
+
+}  // namespace model
