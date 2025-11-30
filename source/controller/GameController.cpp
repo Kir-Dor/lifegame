@@ -9,7 +9,6 @@
 #include "events/user/Start.h"
 #include "events/user/Stop.h"
 #include "events/user/Tick.h"
-#include "misc/LambdaCreator.h"
 #include "model/GameModel.h"
 
 namespace controller {

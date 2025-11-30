@@ -14,7 +14,7 @@ void LifeGame::run() {
   global::EventBus::get_instance();
 
   std::shared_ptr<model::GameModel> game_model = std::make_shared<model::GameModel>();
-  std::shared_ptr<controller::GameController> game_contrfreoller = std::make_shared<controller::GameController>(game_model);
+  std::shared_ptr<controller::GameController> game_controller = std::make_shared<controller::GameController>(game_model);
   std::shared_ptr<view::GameView> game_view = std::make_shared<view::GameView>();
 
   game_view->display();
