@@ -23,11 +23,8 @@ Console::Console(ConsoleCreateInfo& create_info)
 
   auto& event_bus = global::EventBus::get_instance();
 
-  event_bus.subscribe<event::Error>(
-      ::misc::LambdaCreator::create<&Console::on_error>(*this));
-
-  event_bus.subscribe<event::view::Resume>(
-      ::misc::LambdaCreator::create<&Console::on_resume>(*this));
+  event_bus.subscribe<event::Error, &Console::on_error>(*this);
+  event_bus.subscribe<event::view::Resume, &Console::on_resume>(*this);
 
   global::Logger::get_instance().log_debug(
       R"(View component "Console" initialized!)");
@@ -36,11 +33,8 @@ Console::Console(ConsoleCreateInfo& create_info)
 Console::~Console() {
   auto& event_bus = global::EventBus::get_instance();
 
-  event_bus.unsubscribe<event::Error>(
-      ::misc::LambdaCreator::create<&Console::on_error>(*this));
-
-  event_bus.unsubscribe<event::view::Resume>(
-      ::misc::LambdaCreator::create<&Console::on_resume>(*this));
+  event_bus.unsubscribe<event::Error, &Console::on_error>(*this);
+  event_bus.unsubscribe<event::view::Resume, &Console::on_resume>(*this);
 }
 
 void Console::draw() {

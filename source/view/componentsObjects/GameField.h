@@ -1,7 +1,8 @@
 #pragma once
-#include "view/IComponent.h"
-
 #include <thread>
+
+#include "events/ISubscriber.h"
+#include "view/IComponent.h"
 
 namespace event::model {
 class FieldChanged;
@@ -11,7 +12,7 @@ namespace view::component {
 
 struct GameFieldCreateInfo : public IComponentCreateInfo {};
 
-class GameField final : public IComponent {
+class GameField final : public IComponent, public event::ISubscriber {
  public:
   GameField(GameFieldCreateInfo& create_info);
   ~GameField();

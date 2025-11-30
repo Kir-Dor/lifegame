@@ -22,26 +22,13 @@ GameController::GameController(
   auto& event_bus = global::EventBus::get_instance();
   auto& logger = global::Logger::get_instance();
 
-  event_bus.subscribe<event::user::LoadFile>(
-      misc::LambdaCreator::create<&GameController::on_load>(*this));
-
-  event_bus.subscribe<event::user::SaveFile>(
-      misc::LambdaCreator::create<&GameController::on_save>(*this));
-
-  event_bus.subscribe<event::user::Tick>(
-      misc::LambdaCreator::create<&GameController::on_tick>(*this));
-
-  event_bus.subscribe<event::user::Start>(
-      misc::LambdaCreator::create<&GameController::on_start>(*this));
-
-  event_bus.subscribe<event::user::Stop>(
-      misc::LambdaCreator::create<&GameController::on_stop>(*this));
-
-  event_bus.subscribe<event::user::Pause>(
-      misc::LambdaCreator::create<&GameController::on_pause>(*this));
-
-  event_bus.subscribe<event::user::Exit>(
-      misc::LambdaCreator::create<&GameController::on_exit>(*this));
+  event_bus.subscribe<event::user::LoadFile, &GameController::on_load>(*this);
+  event_bus.subscribe<event::user::SaveFile, &GameController::on_save>(*this);
+  event_bus.subscribe<event::user::Tick, &GameController::on_tick>(*this);
+  event_bus.subscribe<event::user::Start, &GameController::on_start>(*this);
+  event_bus.subscribe<event::user::Stop, &GameController::on_stop>(*this);
+  event_bus.subscribe<event::user::Pause, &GameController::on_pause>(*this);
+  event_bus.subscribe<event::user::Exit, &GameController::on_exit>(*this);
 
   logger.log_debug("Controller initialized!");
 }
@@ -49,26 +36,13 @@ GameController::GameController(
 GameController::~GameController() {
   auto& event_bus = global::EventBus::get_instance();
 
-  event_bus.unsubscribe<event::user::LoadFile>(
-      misc::LambdaCreator::create<&GameController::on_load>(*this));
-
-  event_bus.unsubscribe<event::user::SaveFile>(
-      misc::LambdaCreator::create<&GameController::on_save>(*this));
-
-  event_bus.unsubscribe<event::user::Tick>(
-      misc::LambdaCreator::create<&GameController::on_tick>(*this));
-
-  event_bus.unsubscribe<event::user::Start>(
-      misc::LambdaCreator::create<&GameController::on_start>(*this));
-
-  event_bus.unsubscribe<event::user::Stop>(
-      misc::LambdaCreator::create<&GameController::on_stop>(*this));
-
-  event_bus.unsubscribe<event::user::Pause>(
-      misc::LambdaCreator::create<&GameController::on_pause>(*this));
-
-  event_bus.unsubscribe<event::user::Exit>(
-      misc::LambdaCreator::create<&GameController::on_exit>(*this));
+  event_bus.unsubscribe<event::user::LoadFile, &GameController::on_load>(*this);
+  event_bus.unsubscribe<event::user::SaveFile, &GameController::on_save>(*this);
+  event_bus.unsubscribe<event::user::Tick, &GameController::on_tick>(*this);
+  event_bus.unsubscribe<event::user::Start, &GameController::on_start>(*this);
+  event_bus.unsubscribe<event::user::Stop, &GameController::on_stop>(*this);
+  event_bus.unsubscribe<event::user::Pause, &GameController::on_pause>(*this);
+  event_bus.unsubscribe<event::user::Exit, &GameController::on_exit>(*this);
 }
 
 void GameController::on_load(const event::user::LoadFile& event) {

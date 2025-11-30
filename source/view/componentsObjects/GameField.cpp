@@ -30,15 +30,13 @@ GameField::GameField(GameFieldCreateInfo& create_info)
 
   auto& event_bus = global::EventBus::get_instance();
 
-  event_bus.subscribe<event::model::FieldChanged>(
-      ::misc::LambdaCreator::create<&GameField::on_field_changed>(*this));
+  event_bus.subscribe<event::model::FieldChanged, &GameField::on_field_changed>(*this);
 }
 
 GameField::~GameField() {
   auto& event_bus = global::EventBus::get_instance();
 
-  event_bus.unsubscribe<event::model::FieldChanged>(
-      ::misc::LambdaCreator::create<&GameField::on_field_changed>(*this));
+  event_bus.unsubscribe<event::model::FieldChanged, &GameField::on_field_changed>(*this);
 }
 
 void GameField::draw() {

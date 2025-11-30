@@ -21,14 +21,12 @@ InfoWindow::InfoWindow(
 
   auto& event_bus = global::EventBus::get_instance();
 
-  event_bus.subscribe<event::Error>(
-      ::misc::LambdaCreator::create<&InfoWindow::on_error>(*this));
+  event_bus.subscribe<event::Error, &InfoWindow::on_error>(*this);
 }
 InfoWindow::~InfoWindow() {
   auto& event_bus = global::EventBus::get_instance();
 
-  event_bus.unsubscribe<event::Error>(
-      ::misc::LambdaCreator::create<&InfoWindow::on_error>(*this));
+  event_bus.unsubscribe<event::Error, &InfoWindow::on_error>(*this);
 }
 
 void InfoWindow::draw() {

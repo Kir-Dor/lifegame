@@ -2,6 +2,8 @@
 #include <atomic>
 #include <memory>
 
+#include "events/ISubscriber.h"
+
 namespace event::user {
 class LoadFile;
 class SaveFile;
@@ -18,7 +20,7 @@ class GameModel;
 
 namespace controller {
 
-class GameController {
+class GameController : public event::ISubscriber {
  public:
   GameController(const std::shared_ptr<model::GameModel>& game_model);
   ~GameController();

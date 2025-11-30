@@ -1,9 +1,9 @@
 #pragma once
-#include "view/IComponent.h"
-
+#include <SFML/Graphics.hpp>
 #include <atomic>
 
-#include <SFML/Graphics.hpp>
+#include "events/ISubscriber.h"
+#include "view/IComponent.h"
 
 namespace event {
 class Error;
@@ -19,7 +19,7 @@ struct ConsoleCreateInfo : public IComponentCreateInfo {
   float& window_fps_;
 };
 
-class Console final : public IComponent {
+class Console final : public IComponent, public event::ISubscriber {
 public:
   Console(ConsoleCreateInfo& create_info);
   ~Console();
