@@ -1,10 +1,12 @@
 #include "Console.h"
 
-#include "misc/LambdaCreator.h"
-#include "misc/Config.h"
 #include "events/EventBus.h"
 #include "events/other/Error.h"
+#include "events/user/Clear.h"
+#include "events/user/EditMode.h"
 #include "events/view/Resume.h"
+#include "misc/Config.h"
+#include "misc/LambdaCreator.h"
 #include "view/misc/CommandParser.h"
 
 namespace view::component {
@@ -52,7 +54,17 @@ void Console::draw() {
 void Console::on_sfml_event() {
   switch (state_) {
     case State::ACTIVE: {
-      text_content_ = "Enter Command >> " + user_input;
+      text_content_ = "Enter Command ";
+      if (edit_mode_) {
+        text_content_ += "(Edit Mode) ";
+      }
+      text_content_ += ">> " + user_input;
+      if (auto key_pressed = current_event_->getIf<sf::Event::KeyPressed>()) {
+        if (key_pressed->code == sf::Keyboard::Key::F3) {
+          global::EventBus::get_instance().invoke(event::user::EditMode(!edit_mode_));
+          edit_mode_ = !edit_mode_;
+        }
+      }
       if (auto text_entered = current_event_->getIf<sf::Event::TextEntered>()) {
 
         global::Logger::get_instance().log_trace(

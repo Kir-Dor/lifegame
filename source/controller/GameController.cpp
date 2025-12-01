@@ -2,6 +2,7 @@
 
 #include "events/EventBus.h"
 #include "events/other/Error.h"
+#include "events/user/Clear.h"
 #include "events/user/Exit.h"
 #include "events/user/LoadFile.h"
 #include "events/user/Pause.h"
@@ -9,7 +10,7 @@
 #include "events/user/Start.h"
 #include "events/user/Stop.h"
 #include "events/user/Tick.h"
-#include "events/user/Clear.h"
+#include "events/view/CellChanged.h"
 #include "model/GameModel.h"
 
 namespace controller {
@@ -30,6 +31,7 @@ GameController::GameController(
   event_bus.subscribe<event::user::Pause, &GameController::on_pause>(*this);
   event_bus.subscribe<event::user::Exit, &GameController::on_exit>(*this);
   event_bus.subscribe<event::user::Clear, &GameController::on_clear>(*this);
+  event_bus.subscribe<event::view::CellChanged, &GameController::on_cell_changed>(*this);
 
   logger.log_debug("Controller initialized!");
 }
@@ -44,6 +46,8 @@ GameController::~GameController() {
   event_bus.unsubscribe<event::user::Stop, &GameController::on_stop>(*this);
   event_bus.unsubscribe<event::user::Pause, &GameController::on_pause>(*this);
   event_bus.unsubscribe<event::user::Exit, &GameController::on_exit>(*this);
+  event_bus.unsubscribe<event::user::Clear, &GameController::on_clear>(*this);
+  event_bus.unsubscribe<event::view::CellChanged, &GameController::on_cell_changed>(*this);
 }
 
 void GameController::on_load(const event::user::LoadFile& event) {
@@ -77,6 +81,14 @@ void GameController::on_clear(const event::user::Clear& event) {
   }
   try {
     game_model_->clear();
+  } catch (std::exception& e) {
+    global::EventBus::get_instance().invoke(event::Error(e.what()));
+  }
+}
+
+void GameController::on_cell_changed(const event::view::CellChanged& event) {
+  try {
+    game_model_->set(event.x, event.y, event.value);
   } catch (std::exception& e) {
     global::EventBus::get_instance().invoke(event::Error(e.what()));
   }

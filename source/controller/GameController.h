@@ -4,6 +4,10 @@
 
 #include "events/ISubscriber.h"
 
+namespace event::view {
+class CellChanged;
+}
+
 namespace event::user {
 class LoadFile;
 class SaveFile;
@@ -34,6 +38,7 @@ class GameController : public event::ISubscriber {
   void on_pause(const event::user::Pause& event);
   void on_exit(const event::user::Exit& event);
   void on_clear(const event::user::Clear& event);
+  void on_cell_changed(const event::view::CellChanged& event);
  private:
   std::shared_ptr<model::GameModel> game_model_;
   std::atomic_bool start_flag_;

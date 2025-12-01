@@ -2,6 +2,7 @@
 #include "misc/Config.h"
 #include "events/EventBus.h"
 #include "events/model/FieldChanged.h"
+#include "events/model/CellChanged.h"
 
 #include <boost/algorithm/string.hpp>
 #include <boost/filesystem/fstream.hpp>
@@ -74,6 +75,7 @@ void GameModel::load(const std::string& filepath) {
     field_[x * Config::FIELD_HEIGHT + y] = true;
   }
 
+  initialized_ = true;
   global::EventBus::get_instance().invoke(event::model::FieldChanged(field_));
 }
 
@@ -113,6 +115,15 @@ void GameModel::save(std::string filename) {
       }
     }
   }
+}
+void GameModel::set(int x, int y, bool value) {
+  global::Logger::get_instance().log_debug("GameModel::set({},{},{})", x, y, value);
+  std::unique_lock lock(mutex_);
+  if (!initialized_) {
+    throw std::runtime_error("Try set value to uninitialized field");
+  }
+  field_[x * Config::FIELD_HEIGHT + y] = value;
+  global::EventBus::get_instance().invoke(event::model::CellChanged(x, y, value));
 }
 
 void GameModel::next_generation() {

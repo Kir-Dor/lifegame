@@ -13,6 +13,7 @@ class GameModel {
   void load(const std::string& filepath);
   void save(std::string filename);
 
+  void set(int x, int y, bool value);
   void next_generation();
   void clear();
 
@@ -20,6 +21,8 @@ class GameModel {
 
  private:
   std::mutex mutex_;
+
+  bool initialized_;
 
   std::vector<bool> field_;
   std::vector<bool> temp_data_;

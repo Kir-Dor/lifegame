@@ -31,6 +31,7 @@ private:
     ACTIVE, INACTIVE, WAITING
   };
   std::atomic<State> state_;
+  std::atomic_bool edit_mode_;
 
   std::string text_content_;
   std::string user_input;
