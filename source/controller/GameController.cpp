@@ -9,6 +9,7 @@
 #include "events/user/Start.h"
 #include "events/user/Stop.h"
 #include "events/user/Tick.h"
+#include "events/user/Clear.h"
 #include "model/GameModel.h"
 
 namespace controller {
@@ -28,6 +29,7 @@ GameController::GameController(
   event_bus.subscribe<event::user::Stop, &GameController::on_stop>(*this);
   event_bus.subscribe<event::user::Pause, &GameController::on_pause>(*this);
   event_bus.subscribe<event::user::Exit, &GameController::on_exit>(*this);
+  event_bus.subscribe<event::user::Clear, &GameController::on_clear>(*this);
 
   logger.log_debug("Controller initialized!");
 }
@@ -45,6 +47,10 @@ GameController::~GameController() {
 }
 
 void GameController::on_load(const event::user::LoadFile& event) {
+  if (start_flag_) {
+    global::EventBus::get_instance().invoke(event::user::Stop());
+    while (!start_flag_) {}
+  }
   try {
     game_model_->load(event.file_path);
   } catch (std::exception& e) {
@@ -62,6 +68,18 @@ void GameController::on_save(const event::user::SaveFile& event) {
 
 void GameController::on_exit(const event::user::Exit& event) {
   stop_flag_ = true;
+}
+
+void GameController::on_clear(const event::user::Clear& event) {
+  if (start_flag_) {
+    global::EventBus::get_instance().invoke(event::user::Stop());
+    while (!start_flag_) {}
+  }
+  try {
+    game_model_->clear();
+  } catch (std::exception& e) {
+    global::EventBus::get_instance().invoke(event::Error(e.what()));
+  }
 }
 
 void GameController::on_tick(const event::user::Tick& event) {

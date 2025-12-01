@@ -12,6 +12,7 @@ class Tick;
 class Start;
 class Pause;
 class Stop;
+class Clear;
 }
 
 namespace model {
@@ -32,6 +33,7 @@ class GameController : public event::ISubscriber {
   void on_stop(const event::user::Stop& event);
   void on_pause(const event::user::Pause& event);
   void on_exit(const event::user::Exit& event);
+  void on_clear(const event::user::Clear& event);
  private:
   std::shared_ptr<model::GameModel> game_model_;
   std::atomic_bool start_flag_;

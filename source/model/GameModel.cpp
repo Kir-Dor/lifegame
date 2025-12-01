@@ -15,6 +15,8 @@ GameModel::GameModel() {
 }
 
 void GameModel::load(const std::string& filepath) {
+  global::Logger::get_instance().log_debug("GameModel::load(\"{}\")", filepath);
+  clear();
   std::unique_lock lock(mutex_);
 
   boost::filesystem::ifstream file(filepath);
@@ -76,6 +78,7 @@ void GameModel::load(const std::string& filepath) {
 }
 
 void GameModel::save(std::string filename) {
+  global::Logger::get_instance().log_debug("GameModel::save(\"{}\")", filename);
   std::unique_lock lock(mutex_);
 
   boost::trim(filename);
@@ -113,6 +116,7 @@ void GameModel::save(std::string filename) {
 }
 
 void GameModel::next_generation() {
+  global::Logger::get_instance().log_debug("GameModel::next_generation()");
   std::unique_lock lock(mutex_);
   auto time_start = std::chrono::high_resolution_clock::now();
   if (field_.empty()) {
@@ -150,7 +154,15 @@ void GameModel::next_generation() {
   std::this_thread::sleep_for(sleep_duration);
 }
 
+void GameModel::clear() {
+  global::Logger::get_instance().log_debug("GameModel::clear()");
+  std::unique_lock lock(mutex_);
+  std::fill(field_.begin(), field_.end(), false);
+  global::EventBus::get_instance().invoke(event::model::FieldChanged(field_));
+}
+
 std::vector<bool> GameModel::get_data() const {
+  global::Logger::get_instance().log_debug("GameModel::get_data()");
   return field_;
 }
 

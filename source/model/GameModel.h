@@ -14,6 +14,7 @@ class GameModel {
   void save(std::string filename);
 
   void next_generation();
+  void clear();
 
   [[nodiscard]] std::vector<bool> get_data() const;
 

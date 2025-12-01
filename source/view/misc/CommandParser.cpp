@@ -5,13 +5,14 @@
 
 #include "events/EventBus.h"
 #include "events/other/Error.h"
+#include "events/user/Clear.h"
 #include "events/user/Exit.h"
 #include "events/user/LoadFile.h"
-#include "events/user/SaveFile.h"
-#include "events/user/Tick.h"
-#include "events/user/Start.h"
 #include "events/user/Pause.h"
+#include "events/user/SaveFile.h"
+#include "events/user/Start.h"
 #include "events/user/Stop.h"
+#include "events/user/Tick.h"
 
 namespace view::misc {
 
@@ -38,6 +39,10 @@ void CommandParser::ParseAndInvoke(std::string command) {
 
   if (command == "pause") {
     event_bus.invoke(event::user::Pause());
+  }
+
+  if (command == "clear") {
+    event_bus.invoke(event::user::Clear());
   }
 
   if (boost::starts_with(command, "load")) try {
