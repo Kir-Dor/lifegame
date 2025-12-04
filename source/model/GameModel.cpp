@@ -10,8 +10,10 @@
 namespace model {
 
 GameModel::GameModel() {
-  rules_for_born_ = 0;
-  rules_for_survive_ = 0;
+  rules_for_born_ = 0b1000;
+  rules_for_survive_ = 0b1100;
+  field_.resize(Config::FIELD_WIDTH * Config::FIELD_HEIGHT, false);
+  temp_data_.resize(Config::FIELD_WIDTH * Config::FIELD_HEIGHT, false);
   global::Logger::get_instance().log_debug("Model initialized!");
 }
 
@@ -75,7 +77,6 @@ void GameModel::load(const std::string& filepath) {
     field_[x * Config::FIELD_HEIGHT + y] = true;
   }
 
-  initialized_ = true;
   global::EventBus::get_instance().invoke(event::model::FieldChanged(field_));
 }
 
@@ -87,9 +88,6 @@ void GameModel::save(std::string filename) {
   boost::filesystem::ofstream file("saves/" + filename + ".life");
   if (!file.is_open()) {
     throw std::runtime_error("Could not open file");
-  }
-  if (field_.empty()) {
-    throw std::runtime_error("Not loaded field");
   }
 
   file << "#N " << universe_name_ << "\n";
@@ -119,9 +117,6 @@ void GameModel::save(std::string filename) {
 void GameModel::set(int x, int y, bool value) {
   global::Logger::get_instance().log_debug("GameModel::set({},{},{})", x, y, value);
   std::unique_lock lock(mutex_);
-  if (!initialized_) {
-    throw std::runtime_error("Try set value to uninitialized field");
-  }
   field_[x * Config::FIELD_HEIGHT + y] = value;
   global::EventBus::get_instance().invoke(event::model::CellChanged(x, y, value));
 }
@@ -130,9 +125,6 @@ void GameModel::next_generation() {
   global::Logger::get_instance().log_debug("GameModel::next_generation()");
   std::unique_lock lock(mutex_);
   auto time_start = std::chrono::high_resolution_clock::now();
-  if (field_.empty()) {
-    throw std::runtime_error("Not loaded field");
-  }
   for (auto i = 0; i < Config::FIELD_WIDTH; ++i) {
     for (auto j = 0; j < Config::FIELD_HEIGHT; ++j) {
       uint8_t lives_around = get_lives_around(i, j);

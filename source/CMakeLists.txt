@@ -4,6 +4,12 @@ add_library(${PROJECT_NAME} STATIC)
 
 target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 
+if(DEFINED TRACE_LOGGING)
+    target_compile_definitions(${PROJECT_NAME} PRIVATE "TRACE_LOG")
+elseif (DEFINED DEBUG_LOGGING)
+    target_compile_definitions(${PROJECT_NAME} PRIVATE "DEBUG_LOG")
+endif ()
+
 file(GLOB_RECURSE src "*.cpp")
 target_sources(${PROJECT_NAME} PRIVATE ${src})
 

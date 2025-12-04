@@ -22,8 +22,6 @@ class GameModel {
  private:
   std::mutex mutex_;
 
-  bool initialized_;
-
   std::vector<bool> field_;
   std::vector<bool> temp_data_;
 
